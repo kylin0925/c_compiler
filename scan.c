@@ -1,7 +1,5 @@
 #include "defs.h"
-#define extern_
 #include "data.h"
-#undef extern_
 #include "decl.h"
 
 static int next(void) {
@@ -50,9 +48,10 @@ int scan(struct token *t){
     int c;
     
     c = skip();
-    
+    printf("scan %x\n", c);
     switch(c){
         case EOF:
+            t->token = T_EOF;
             return 0;
         case '+':
             t->token = T_PLUS;
@@ -67,9 +66,10 @@ int scan(struct token *t){
             t->token = T_SLASH;
             break;            
         default:
-            if(isdigit(c)){
+            if(isdigit(c)){                
                 t->intvalue = scanint(c);
                 t->token = T_INTLIT;
+                printf("digit %d token %d\n",t->intvalue, t->token);
                 break;
             }
             printf("unrecognised character %c on line %d\n", c, Line);

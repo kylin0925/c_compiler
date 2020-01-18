@@ -1,7 +1,5 @@
 #include "defs.h"
-#define extern_
 #include "data.h"
-#undef extern_
 #include "decl.h"
 
 
@@ -22,11 +20,16 @@ static void scanfile(){
     }
 }
 void main(int argc,char **argv){
-    
+    struct ASTnode *n;
     init();
     printf("start scan %s\n",argv[1]);
     Infile = fopen(argv[1], "r");
     
-    scanfile();   
+    //scanfile();   
+    scan(&Token);
+    printf("binexpr\n");
+    n = binexpr();
+    printf("interpretAST\n");
+    printf("%d\n", interpretAST(n));
     exit(0);
 }
