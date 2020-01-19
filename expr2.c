@@ -2,15 +2,6 @@
 #include "data.h"
 #include "decl.h"
 
-static int OpPrec[] = {0, 10,10,20,20,0};
-
-static int op_precedence(int tokentype) {
-    int prec = OpPrec[tokentype];
-    if(prec == 0){
-        fprintf(stderr, "syntax error on line %d, token %d\n", Line, tokentype);
-    }
-    return prec;
-}
 int arithop(int tok) {
     printf("tok %d\n",tok);
     switch (tok){
@@ -41,30 +32,59 @@ static struct ASTnode *primary(void) {
             exit(1);
     }
 }
-
-struct ASTnode *binexpr(int ptp) {
+struct ASTnode *additive_expr(void);
+struct ASTnode *multiplicative_expr(void){
     struct ASTnode *n, *left, *right;
     int tokentype;
     
     left = primary();
-    printf("binexpr %d\n",Token.token);{
-        
-    }
+    
     tokentype = Token.token;
     if( tokentype == T_EOF){
         return left;
     }
-    while(op_precedence(tokentype) > ptp){
+    
+    
+    while( tokentype == T_STAR || tokentype == T_SLASH ){
         scan(&Token);
-        right = binexpr(OpPrec[tokentype]);
+        right = primary();
         
-        left = mkastnode(arithop(tokentype), left,right,0);
-     
+        left = mkastnode(arithop(tokentype), left, right, 0);
         tokentype = Token.token;
         if( tokentype == T_EOF){
-            return left;
-        }     
+            break;
+        }   
     }
-    
     return left;
 }
+
+struct ASTnode *additive_expr(void){
+    struct ASTnode *n, *left, *right;
+    int tokentype;
+    
+    left = multiplicative_expr();
+    
+    tokentype = Token.token;
+    if( tokentype == T_EOF){
+        return left;
+    }
+    
+    
+    while( 1 ){
+        scan(&Token);
+        right = multiplicative_expr();
+        
+        left = mkastnode(arithop(tokentype), left, right, 0);
+        tokentype = Token.token;
+        if( tokentype == T_EOF){
+            break;
+        }   
+    }
+    return left;
+}
+
+
+struct ASTnode *binexpr(int n) {
+    return additive_expr();    
+}
+

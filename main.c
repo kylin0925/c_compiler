@@ -28,7 +28,7 @@ void main(int argc,char **argv){
     //scanfile();   
     scan(&Token);
     printf("binexpr\n");
-    n = binexpr();
+    n = binexpr(0);
     printf("interpretAST\n");
     printf("%d\n", interpretAST(n));
     exit(0);
