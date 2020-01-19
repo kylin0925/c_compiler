@@ -25,11 +25,16 @@ void main(int argc,char **argv){
     printf("start scan %s\n",argv[1]);
     Infile = fopen(argv[1], "r");
     
+    Outfile = fopen("out.s", "w");
     //scanfile();   
     scan(&Token);
     printf("binexpr\n");
     n = binexpr(0);
     printf("interpretAST\n");
     printf("%d\n", interpretAST(n));
+    
+    generatecode(n);
+    
+    fclose(Outfile);
     exit(0);
 }
